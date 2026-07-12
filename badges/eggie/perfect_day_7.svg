@@ -1,0 +1,32 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="body5" cx="50%" cy="35%">
+      <stop offset="0%" stop-color="#FFF59D"/>
+      <stop offset="70%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#F57F17"/>
+    </radialGradient>
+    <linearGradient id="crown5" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#FFA000"/>
+    </linearGradient>
+  </defs>
+  <!-- 王者光环 -->
+  <circle cx="100" cy="110" r="88" fill="none" stroke="#FFD700" stroke-width="3" opacity="0.4"/>
+  <!-- 蛋体 -->
+  <ellipse cx="100" cy="115" rx="65" ry="70" fill="url(#body5)" stroke="#E65100" stroke-width="2"/>
+  <!-- 高光 -->
+  <ellipse cx="75" cy="85" rx="20" ry="15" fill="rgba(255,255,255,0.4)"/>
+  <!-- 皇冠 -->
+  <path d="M70 55 L75 35 L85 48 L100 30 L115 48 L125 35 L130 55 Z" fill="url(#crown5)" stroke="#E65100" stroke-width="1.5"/>
+  <circle cx="100" cy="38" r="3" fill="#E91E63"/>
+  <circle cx="78" cy="45" r="2" fill="#2196F3"/>
+  <circle cx="122" cy="45" r="2" fill="#4CAF50"/>
+  <!-- 自信眼睛 -->
+  <path d="M75 102 Q82 96 89 102" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M111 102 Q118 96 125 102" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- 腮红 -->
+  <circle cx="68" cy="125" r="8" fill="#FF8A65" opacity="0.7"/>
+  <circle cx="132" cy="125" r="8" fill="#FF8A65" opacity="0.7"/>
+  <!-- 王者笑容 -->
+  <path d="M80 135 Q100 148 120 135" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

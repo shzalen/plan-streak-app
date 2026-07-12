@@ -1,0 +1,17 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg8" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFFDE7"/><stop offset="100%" stop-color="#FFF59D"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bg8)"/>
+  <!-- 闪电 -->
+  <polygon points="110,35 75,105 100,105 85,165 130,90 105,90 120,35" fill="#F1C40F" stroke="#F57F17" stroke-width="2.5"/>
+  <!-- 电火花 -->
+  <g stroke="#FFD700" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M55 70 L45 65 M45 75 L35 75"/>
+    <path d="M145 130 L155 135 M155 125 L165 125"/>
+    <path d="M60 140 L50 145"/>
+    <path d="M150 60 L160 55"/>
+  </g>
+  <!-- 光环 -->
+  <circle cx="100" cy="100" r="78" fill="none" stroke="#FFD700" stroke-width="2" stroke-dasharray="4 4" opacity="0.4"/>
+</svg>

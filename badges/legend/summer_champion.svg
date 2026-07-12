@@ -1,0 +1,21 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgL2" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFFDE7"/><stop offset="100%" stop-color="#FFF176"/></radialGradient>
+    <linearGradient id="medal2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#FF8F00"/></linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bgL2)"/>
+  <!-- 金牌 -->
+  <circle cx="100" cy="90" r="50" fill="url(#medal2)" stroke="#E65100" stroke-width="3"/>
+  <circle cx="100" cy="90" r="40" fill="none" stroke="#FFF" stroke-width="2" opacity="0.4"/>
+  <!-- 100 -->
+  <text x="100" y="100" text-anchor="middle" font-size="26" fill="#FFF" font-weight="bold" font-family="sans-serif">100</text>
+  <!-- 飘带 -->
+  <path d="M65 125 L55 175 L72 165 L82 170 L78 130" fill="#E65100" stroke="#BF360C" stroke-width="1.5"/>
+  <path d="M135 125 L145 175 L128 165 L118 170 L122 130" fill="#E65100" stroke="#BF360C" stroke-width="1.5"/>
+  <!-- 光芒 -->
+  <g stroke="#FFD700" stroke-width="2.5" opacity="0.5">
+    <line x1="100" y1="25" x2="100" y2="15"/>
+    <line x1="40" y1="55" x2="30" y2="50"/>
+    <line x1="160" y1="55" x2="170" y2="50"/>
+  </g>
+</svg>

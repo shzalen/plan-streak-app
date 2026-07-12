@@ -1,0 +1,24 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgL3" cx="50%" cy="50%"><stop offset="0%" stop-color="#F3E5F5"/><stop offset="100%" stop-color="#CE93D8"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bgL3)"/>
+  <!-- 超新星星 -->
+  <polygon points="100,30 108,75 155,75 117,100 130,145 100,118 70,145 83,100 45,75 92,75" fill="#9B59B6" stroke="#6A1B9A" stroke-width="2.5"/>
+  <!-- 中心光 -->
+  <circle cx="100" cy="95" r="15" fill="#FFF" opacity="0.6"/>
+  <circle cx="100" cy="95" r="8" fill="#FFF"/>
+  <!-- 光芒射线 -->
+  <g stroke="#FFD700" stroke-width="2.5" opacity="0.5" stroke-linecap="round">
+    <line x1="100" y1="15" x2="100" y2="5"/>
+    <line x1="100" y1="185" x2="100" y2="175"/>
+    <line x1="15" y1="95" x2="5" y2="95"/>
+    <line x1="195" y1="95" x2="185" y2="95"/>
+    <line x1="30" y1="30" x2="22" y2="22"/>
+    <line x1="178" y1="22" x2="170" y2="30"/>
+    <line x1="22" y1="170" x2="30" y2="162"/>
+    <line x1="170" y1="162" x2="178" y2="170"/>
+  </g>
+  <!-- 200 -->
+  <text x="100" y="100" text-anchor="middle" font-size="16" fill="#6A1B9A" font-weight="bold" font-family="sans-serif">200</text>
+</svg>

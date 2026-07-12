@@ -1,0 +1,16 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg4" cx="50%" cy="50%"><stop offset="0%" stop-color="#F3E5F5"/><stop offset="100%" stop-color="#E1BEE7"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bg4)"/>
+  <!-- 月亮 -->
+  <path d="M130 60 Q120 80 120 100 Q120 120 130 140 Q105 135 95 115 Q85 95 95 75 Q105 55 130 60" fill="#9B59B6" stroke="#7B1FA2" stroke-width="2"/>
+  <!-- 月坑 -->
+  <circle cx="108" cy="85" r="4" fill="#7B1FA2" opacity="0.5"/>
+  <circle cx="115" cy="110" r="3" fill="#7B1FA2" opacity="0.5"/>
+  <circle cx="102" cy="100" r="2.5" fill="#7B1FA2" opacity="0.5"/>
+  <!-- 星星 -->
+  <polygon points="50,50 53,58 61,58 55,63 57,71 50,66 43,71 45,63 39,58 47,58" fill="#FFD700"/>
+  <polygon points="160,150 163,158 171,158 165,163 167,171 160,166 153,171 155,163 149,158 157,158" fill="#FFD700"/>
+  <polygon points="40,130 42,135 47,135 43,138 44,143 40,140 36,143 37,138 33,135 38,135" fill="#FFD700"/>
+</svg>

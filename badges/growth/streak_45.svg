@@ -1,0 +1,15 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg7" cx="50%" cy="50%"><stop offset="0%" stop-color="#ECEFF1"/><stop offset="100%" stop-color="#CFD8DC"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bg7)"/>
+  <!-- 盾牌 -->
+  <path d="M100 45 L145 60 L145 110 Q145 140 100 155 Q55 140 55 110 L55 60 Z" fill="#34495E" stroke="#1B2631" stroke-width="3"/>
+  <path d="M100 55 L135 67 L135 108 Q135 133 100 145 Q65 133 65 108 L65 67 Z" fill="#455A64"/>
+  <!-- 剑 -->
+  <line x1="100" y1="75" x2="100" y2="125" stroke="#ECEFF1" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="100,70 95,80 105,80" fill="#ECEFF1"/>
+  <line x1="88" y1="120" x2="112" y2="120" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+  <!-- 星标 -->
+  <polygon points="100,88 103,96 111,96 105,101 107,109 100,104 93,109 95,101 89,96 97,96" fill="#FFD700"/>
+</svg>
