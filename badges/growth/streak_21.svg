@@ -1,0 +1,22 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg5" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFF3E0"/><stop offset="100%" stop-color="#FFE0B2"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bg5)"/>
+  <!-- 靶心 -->
+  <circle cx="100" cy="100" r="45" fill="none" stroke="#F5A623" stroke-width="3"/>
+  <circle cx="100" cy="100" r="32" fill="none" stroke="#F5A623" stroke-width="3"/>
+  <circle cx="100" cy="100" r="20" fill="#F5A623" opacity="0.3"/>
+  <circle cx="100" cy="100" r="10" fill="#F5A623"/>
+  <!-- 箭 -->
+  <line x1="100" y1="100" x2="150" y2="50" stroke="#333" stroke-width="2.5"/>
+  <polygon points="150,50 142,52 148,58" fill="#333"/>
+  <polygon points="100,100 96,104 104,106 102,98" fill="#333"/>
+  <!-- 光芒 -->
+  <g stroke="#FFD54F" stroke-width="2" opacity="0.6">
+    <line x1="100" y1="40" x2="100" y2="30"/>
+    <line x1="100" y1="160" x2="100" y2="170"/>
+    <line x1="40" y1="100" x2="30" y2="100"/>
+    <line x1="160" y1="100" x2="170" y2="100"/>
+  </g>
+</svg>

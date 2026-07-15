@@ -1,0 +1,1 @@
+function r(t){return/^1\d{10}$/.test(t)}function n(t){return!(t.length<8||t.length>128||!/\d/.test(t)||!/[a-zA-Z]/.test(t))}function i(t,e){return t===e}function u(t){return t?t.length<8?"密码至少8位":t.length>128?"密码不能超过128位":/\d/.test(t)?/[a-zA-Z]/.test(t)?"":"密码需包含字母":"密码需包含数字":"请输入密码"}export{n as a,i as b,u as g,r as i};

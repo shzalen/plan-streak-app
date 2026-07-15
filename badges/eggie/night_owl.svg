@@ -1,0 +1,42 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="body2" cx="50%" cy="35%">
+      <stop offset="0%" stop-color="#5C6BC0"/>
+      <stop offset="70%" stop-color="#3F51B5"/>
+      <stop offset="100%" stop-color="#283593"/>
+    </radialGradient>
+    <radialGradient id="moon" cx="40%" cy="35%">
+      <stop offset="0%" stop-color="#FFF9C4"/>
+      <stop offset="100%" stop-color="#FFD54F"/>
+    </radialGradient>
+  </defs>
+  <!-- 星星 -->
+  <g fill="#FFD54F">
+    <circle cx="30" cy="35" r="2"/>
+    <circle cx="170" cy="40" r="1.5"/>
+    <circle cx="25" cy="80" r="1.5"/>
+    <circle cx="175" cy="85" r="2"/>
+    <circle cx="45" cy="20" r="1"/>
+    <circle cx="155" cy="25" r="1.5"/>
+    <circle cx="20" cy="120" r="1"/>
+    <circle cx="180" cy="130" r="1.5"/>
+  </g>
+  <!-- 小月亮 -->
+  <circle cx="165" cy="30" r="12" fill="url(#moon)" opacity="0.7"/>
+  <circle cx="170" cy="28" r="10" fill="#3F51B5"/>
+  <!-- 蛋体 -->
+  <ellipse cx="100" cy="110" rx="65" ry="70" fill="url(#body2)" stroke="#1A237E" stroke-width="2"/>
+  <!-- 高光 -->
+  <ellipse cx="75" cy="80" rx="20" ry="15" fill="rgba(255,255,255,0.2)"/>
+  <!-- 眼睛（困倦的） -->
+  <path d="M75 100 Q82 95 89 100" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M111 100 Q118 95 125 100" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- 腮红 -->
+  <circle cx="68" cy="120" r="8" fill="#7986CB" opacity="0.5"/>
+  <circle cx="132" cy="120" r="8" fill="#7986CB" opacity="0.5"/>
+  <!-- 小嘴 -->
+  <ellipse cx="100" cy="132" rx="6" ry="4" fill="#333"/>
+  <!-- Z字表示困 -->
+  <text x="135" y="75" font-size="16" fill="#FFD54F" font-weight="bold">Z</text>
+  <text x="145" y="62" font-size="12" fill="#FFD54F" font-weight="bold">z</text>
+</svg>

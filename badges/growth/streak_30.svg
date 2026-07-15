@@ -1,0 +1,17 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg6" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFEBEE"/><stop offset="100%" stop-color="#FFCDD2"/></radialGradient>
+    <linearGradient id="crown6" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#FF8F00"/></linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bg6)"/>
+  <!-- 皇冠 -->
+  <path d="M50 130 L55 70 L80 100 L100 55 L120 100 L145 70 L150 130 Z" fill="url(#crown6)" stroke="#E65100" stroke-width="2.5"/>
+  <!-- 宝石 -->
+  <circle cx="55" cy="70" r="6" fill="#E91E63"/>
+  <circle cx="100" cy="55" r="7" fill="#2196F3"/>
+  <circle cx="145" cy="70" r="6" fill="#4CAF50"/>
+  <!-- 底座 -->
+  <rect x="48" y="130" width="104" height="12" rx="4" fill="#FF8F00" stroke="#E65100" stroke-width="2"/>
+  <!-- 30标记 -->
+  <text x="100" y="125" text-anchor="middle" font-size="24" fill="#FFF" font-weight="bold" font-family="sans-serif">30</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgL1" cx="50%" cy="50%"><stop offset="0%" stop-color="#E3F2FD"/><stop offset="100%" stop-color="#90CAF9"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bgL1)"/>
+  <!-- 勋章 -->
+  <circle cx="100" cy="95" r="45" fill="#4A90D9" stroke="#1565C0" stroke-width="3"/>
+  <circle cx="100" cy="95" r="35" fill="none" stroke="#FFF" stroke-width="2" opacity="0.5"/>
+  <!-- 50 -->
+  <text x="100" y="105" text-anchor="middle" font-size="28" fill="#FFF" font-weight="bold" font-family="sans-serif">50</text>
+  <!-- 飘带 -->
+  <path d="M70 130 L60 170 L75 160 L85 165 L80 135" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+  <path d="M130 130 L140 170 L125 160 L115 165 L120 135" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+  <!-- 星星 -->
+  <polygon points="100,55 103,63 111,63 105,68 107,76 100,71 93,76 95,68 89,63 97,63" fill="#FFD700"/>
+</svg>

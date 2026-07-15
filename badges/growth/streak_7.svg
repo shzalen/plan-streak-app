@@ -1,0 +1,19 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg3" cx="50%" cy="50%"><stop offset="0%" stop-color="#E3F2FD"/><stop offset="100%" stop-color="#BBDEFB"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#bg3)"/>
+  <!-- 日历 -->
+  <rect x="55" y="50" width="90" height="80" rx="8" fill="#FFF" stroke="#4A90D9" stroke-width="2.5"/>
+  <rect x="55" y="50" width="90" height="22" rx="8" fill="#4A90D9"/>
+  <rect x="55" y="60" width="90" height="12" fill="#4A90D9"/>
+  <!-- 挂钩 -->
+  <rect x="70" y="42" width="6" height="16" rx="3" fill="#333"/>
+  <rect x="124" y="42" width="6" height="16" rx="3" fill="#333"/>
+  <!-- 7天 -->
+  <text x="100" y="105" text-anchor="middle" font-size="36" fill="#4A90D9" font-weight="bold" font-family="sans-serif">7</text>
+  <text x="100" y="125" text-anchor="middle" font-size="14" fill="#78909C" font-family="sans-serif">DAYS</text>
+  <!-- 星星 -->
+  <polygon points="40,40 43,48 51,48 45,53 47,61 40,56 33,61 35,53 29,48 37,48" fill="#FFD700"/>
+  <polygon points="160,40 163,48 171,48 165,53 167,61 160,56 153,61 155,53 149,48 157,48" fill="#FFD700"/>
+</svg>
