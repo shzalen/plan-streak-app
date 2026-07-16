@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>打卡啦 Demo</title>
+  <style>
+    /* ===== Reset ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100dvh; width: 100%; background-color: #F5F7FA; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      font-size: 16px; color: #2C3E50; line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; border: none; background: none; cursor: pointer; }
+    ul, ol, li { list-style: none; }
+
+    /* ===== 变量 ===== */
+    :root {
+      --color-primary: #4A90D9;
+      --color-primary-light: #6BA5E1;
+      --color-primary-dark: #3A7BC8;
+      --color-primary-bg: #EAF2FB;
+      --color-success: #27AE60;
+      --color-warning: #F5A623;
+      --color-danger: #E74C3C;
+      --color-bg: #F5F7FA;
+      --color-card: #FFFFFF;
+      --color-divider: #ECEEF2;
+      --color-text-primary: #2C3E50;
+      --color-text-secondary: #7F8C8D;
+      --color-text-placeholder: #BDC3C7;
+      --color-border: #E0E4E8;
+      --font-family-number: 'DIN Alternate', 'Helvetica Neue', -apple-system, sans-serif;
+      --text-caption: 12px;
+      --text-body-sm: 14px;
+      --text-body: 16px;
+      --text-title-sm: 18px;
+      --text-title: 20px;
+      --text-title-lg: 24px;
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 16px;
+      --space-lg: 20px;
+      --space-xl: 24px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 999px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 16px rgba(74,144,217,0.24);
+      --duration-fast: 150ms;
+      --duration-normal: 300ms;
+      --ease-out: ease-out;
+      --app-max-width: 480px;
+    }
+    @media (min-width: 768px) and (max-width: 1023px) { :root { --app-max-width: 600px; } }
+    @media (min-width: 1024px) { :root { --app-max-width: 768px; } }
+
+    /* ===== App 容器 ===== */
+    .app {
+      max-width: var(--app-max-width);
+      margin: 0 auto;
+      min-height: 100dvh;
+      background: var(--color-bg);
+      position: relative;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /* ===== 渐变头部 ===== */
+    .home-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      width: 100%;
+      max-width: var(--app-max-width);
+      margin: 0 auto;
+      z-index: 10;
+      background: linear-gradient(135deg, #4A90D9 0%, #5BA0E6 30%, #3A7BC8 70%, #2E68A8 100%);
+      overflow: hidden;
+      padding: calc(14px + env(safe-area-inset-top)) 20px 18px;
+      color: #FFFFFF;
+    }
+
+    /* 气泡装饰 */
+    .bubble {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.08); pointer-events: none;
+    }
+    .bubble-1 { width:80px; height:80px; top:-20px; right:40px; animation: bubble-float 8s ease-in-out infinite; }
+    .bubble-2 { width:50px; height:50px; top:30px; right:120px; background:rgba(255,255,255,0.06); animation: bubble-float 6s ease-in-out infinite 1s; }
+    .bubble-3 { width:35px; height:35px; bottom:10px; right:60px; background:rgba(255,255,255,0.1); animation: bubble-float 7s ease-in-out infinite 2s; }
+    .bubble-4 { width:60px; height:60px; top:10px; left:-20px; background:rgba(255,255,255,0.05); animation: bubble-float 9s ease-in-out infinite 0.5s; }
+    .bubble-5 { width:25px; height:25px; bottom:20px; left:100px; background:rgba(255,255,255,0.07); animation: bubble-float 5s ease-in-out infinite 1.5s; }
+
+    @keyframes bubble-float {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+      50% { transform: translateY(-12px) scale(1.1); opacity: 1; }
+    }
+
+    .header-inner { position: relative; z-index: 1; }
+    .header-row { display: flex; justify-content: space-between; align-items: center; }
+    .header-left { display: flex; flex-direction: column; gap: 2px; }
+    .home-title { font-size: var(--text-title-lg); font-weight: 700; }
+    .date-text { font-size: var(--text-body-sm); opacity: 0.85; }
+
+    /* 生长阶段胶囊 */
+    .streak-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px 4px 6px; border-radius: 999px;
+    }
+    .streak-number { font-size: var(--text-title); font-weight: 700; color: #FFFFFF; font-family: var(--font-family-number); }
+    .streak-label { font-size: var(--text-caption); opacity: 0.9; }
+
+    /* 知识点条 */
+    .knowledge-bar {
+      margin-top: 12px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 10px 14px;
+      cursor: pointer;
+      transition: background 150ms ease-out;
+    }
+    .knowledge-bar:active { background: rgba(255,255,255,0.2); }
+    .knowledge-bar-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .knowledge-tag {
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px; flex-shrink: 0;
+    }
+    .knowledge-hint { font-size: 10px; opacity: 0.7; flex: 1; }
+    .knowledge-summary { font-size: var(--text-body-sm); font-weight: 600; color: #FFFFFF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ===== 内容区 ===== */
+    .page-content {
+      padding-top: calc(192px + env(safe-area-inset-top));
+      padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    }
+
+    /* 列表标题行 */
+    .list-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--space-lg) var(--space-sm);
+    }
+    .list-title { font-size: var(--text-body-sm); font-weight: 600; color: var(--color-text-primary); }
+    .list-progress { display: flex; align-items: center; gap: var(--space-sm); }
+    .progress-count { font-size: var(--text-caption); color: var(--color-text-secondary); font-family: var(--font-family-number); }
+
+    /* 进度环 */
+    .progress-ring-mini { position: relative; width: 28px; height: 28px; }
+    .ring-svg-mini { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-text-mini {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-weight: 700; color: var(--color-primary); font-family: var(--font-family-number);
+    }
+    .ring-complete { animation: ring-glow 1.5s ease-in-out infinite; }
+    @keyframes ring-glow {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(74,144,217,0.4)); }
+      50% { filter: drop-shadow(0 0 8px rgba(74,144,217,0.8)); }
+    }
+
+    /* 打卡列表容器 */
+    .plan-list { padding-bottom: var(--space-xl); }
+    .plan-list-container {
+      background: var(--color-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      box-shadow: var(--shadow-md);
+      margin: 0 var(--space-sm);
+      overflow: hidden;
+    }
+
+    /* ===== PlanCard 样式 ===== */
+    .plan-card {
+      display: flex; align-items: center; gap: var(--space-md);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-divider);
+      position: relative;
+      transition: all 300ms ease-out;
+    }
+    .plan-card:last-child { border-bottom: none; }
+    .plan-card.completed { opacity: 0.75; }
+    .plan-card.completed .plan-name { color: var(--color-text-secondary); }
+
+    /* 分类图标 */
+    .plan-category-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .plan-category-icon.study { background: #EAF2FB; }
+    .plan-category-icon.sport { background: #FDF3E3; }
+    .plan-category-icon.reading { background: #F4ECF7; }
+    .plan-category-icon.housework { background: #E8F6EE; }
+    .plan-category-icon.entertainment { background: #FCE8EF; }
+
+    .plan-info { flex: 1; min-width: 0; }
+    .plan-name { font-size: var(--text-body); font-weight: 600; color: var(--color-text-primary); }
+    .plan-meta { font-size: var(--text-caption); color: var(--color-text-secondary); margin-top: 2px; }
+
+    /* 打卡按钮 */
+    .btn-checkin {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 32px; padding: 0 var(--space-md);
+      background: var(--color-success); color: #FFFFFF;
+      font-size: var(--text-body-sm); font-weight: 500;
+      border: none; border-radius: var(--radius-full);
+      min-width: 72px;
+      transition: all 150ms ease-out;
+    }
+    .btn-checkin:active { transform: scale(0.95); background: #229954; }
+    .btn-checkin.done {
+      background: var(--color-divider);
+      color: var(--color-success);
+      font-weight: 700;
+      min-width: 72px;
+    }
+    .btn-checkin.done::after { content: '✓'; margin-left: 2px; }
+
+    /* ===== Tabbar ===== */
+    .tabbar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      width: 100%;
+      max-width: var(--app-max-width);
+      margin: 0 auto;
+      padding: 0 0 calc(var(--space-sm) + env(safe-area-inset-bottom)) 0;
+      z-index: 100;
+      pointer-events: auto;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .tabbar-inner {
+      pointer-events: auto;
+      height: 56px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-sm);
+      border: none;
+    }
+    .tabbar-item {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 3px;
+      color: #6B7C95;
+      transition: all 300ms ease-out;
+      cursor: pointer;
+      position: relative;
+      height: 44px;
+      border-radius: 14px;
+    }
+    .tabbar-item:active { transform: scale(0.92); }
+    .tabbar-item.active { color: #4A90D9; }
+    .tab-icon { width: 22px; height: 22px; transition: all 300ms ease-out; }
+    .tab-icon svg { width: 100%; height: 100%; }
+    .tab-label { font-size: 10px; font-weight: 600; transition: all 300ms ease-out; }
+    .tabbar-item.active .tab-icon { transform: translateY(-2px); filter: drop-shadow(0 2px 4px rgba(74,144,217,0.3)); }
+    .tabbar-item.active .tab-label { font-weight: 700; }
+    .tabbar-item.active::before {
+      content: '';
+      position: absolute; width: 44px; height: 44px;
+      background: linear-gradient(135deg, #EAF2FB 0%, #D6E5F5 100%);
+      border-radius: 50%; z-index: -1; opacity: 0;
+      transition: all 300ms ease-out;
+    }
+
+    /* iPad 浮岛样式 */
+    @media (min-width: 768px) {
+      .tabbar {
+        padding: 0 var(--space-md) calc(var(--space-sm) + env(safe-area-inset-bottom)) var(--space-md);
+        background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; pointer-events: none;
+      }
+      .tabbar-inner {
+        border-radius: 22px;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 4px 20px rgba(74,144,217,0.15), 0 8px 32px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.6);
+      }
+      .tabbar-item.active::before { opacity: 0.8; }
+    }
+
+    /* ===== 交互逻辑 ===== */
+    .plan-card { cursor: pointer; }
+    .plan-card:active { background: rgba(0,0,0,0.02); }
+
+    /* 打卡动画 */
+    @keyframes checkin-pop {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .checkin-anim .btn-checkin { animation: checkin-pop 0.6s ease-out; }
+
+    /* 鼓励文案弹出 */
+    .encouragement-toast {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 200;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl) var(--space-xxl);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      text-align: center;
+      animation: encouragement-pop 0.5s ease-out forwards;
+    }
+    @keyframes encouragement-pop {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    .encouragement-emoji { font-size: 48px; margin-bottom: var(--space-sm); }
+    .encouragement-text { font-size: var(--text-title); font-weight: 700; color: var(--color-text-primary); }
+
+    /* 庆祝弹窗 */
+    .celebrate-modal {
+      position: fixed; inset: 0;
+      z-index: 300;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .celebrate-content {
+      background: var(--color-card);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xxl);
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      animation: celebrate-pop 0.5s ease-out forwards;
+      max-width: 320px; width: 90%;
+    }
+    @keyframes celebrate-pop {
+      0% { transform: scale(0.3) translateY(40px); opacity: 0; }
+      50% { transform: scale(1.05) translateY(-10px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .celebrate-emoji { font-size: 64px; margin-bottom: var(--space-md); }
+    .celebrate-title { font-size: var(--text-title-lg); font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--space-sm); }
+    .celebrate-desc { font-size: var(--text-body-sm); color: var(--color-text-secondary); margin-bottom: var(--space-lg); }
+    .celebrate-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 44px;
+      background: linear-gradient(135deg, #6BA5E1 0%, #4A90D9 100%);
+      color: #FFFFFF; font-size: var(--text-body); font-weight: 500;
+      border: none; border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      transition: all 150ms ease-out;
+    }
+    .celebrate-btn:active { transform: scale(0.97); }
+
+    /* 徽章弹窗 */
+    .badge-toast {
+      position: fixed; top: 30%; left: 50%;
+      transform: translateX(-50%);
+      z-index: 250;
+      background: var(--color-card);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl) var(--space-lg);
+      box-shadow: 0 8px 32px rgba(74,144,217,0.3);
+      text-align: center;
+      animation: badge-pop 0.4s ease-out forwards;
+      max-width: 280px; width: 85%;
+    }
+    @keyframes badge-pop {
+      0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+      60% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+      100% { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+    .badge-icon { font-size: 56px; margin-bottom: var(--space-sm); }
+    .badge-name { font-size: var(--text-title); font-weight: 700; color: var(--color-primary); margin-bottom: 4px; }
+    .badge-desc { font-size: var(--text-caption); color: var(--color-text-secondary); margin-bottom: var(--space-md); }
+    .badge-close {
+      font-size: var(--text-body-sm); color: var(--color-primary); font-weight: 600;
+      cursor: pointer; padding: 8px 16px;
+    }
+
+    /* FAB 浮动按钮 */
+    .fab {
+      position: absolute;
+      right: var(--space-lg);
+      bottom: calc(76px + env(safe-area-inset-bottom));
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, #6BA5E1 0%, #4A90D9 100%);
+      border: none; border-radius: 50%;
+      box-shadow: 0 4px 16px rgba(74,144,217,0.4);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 10;
+      transition: all 150ms ease-out;
+    }
+    .fab::before, .fab::after {
+      content: ''; position: absolute; background: #FFFFFF; border-radius: 2px;
+    }
+    .fab::before { width: 20px; height: 3px; }
+    .fab::after { width: 3px; height: 20px; }
+    .fab:active { transform: scale(0.9); }
+
+    /* 添加弹窗 */
+    .add-modal {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .add-content {
+      background: var(--color-card);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: var(--space-xl) var(--space-lg);
+      width: 100%;
+      max-width: var(--app-max-width);
+      animation: slide-up 0.3s ease-out;
+    }
+    @keyframes slide-up {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(0); }
+    }
+    .add-title { font-size: var(--text-title); font-weight: 700; margin-bottom: var(--space-lg); text-align: center; }
+    .add-field { margin-bottom: var(--space-md); }
+    .add-field label { font-size: var(--text-body-sm); font-weight: 600; color: var(--color-text-secondary); display: block; margin-bottom: 6px; }
+    .add-input {
+      width: 100%; height: 44px; padding: 0 var(--space-md);
+      border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      font-size: var(--text-body); color: var(--color-text-primary);
+      background: var(--color-bg); outline: none;
+      transition: border-color 150ms ease-out;
+    }
+    .add-input:focus { border-color: var(--color-primary); }
+    .add-categories { display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-lg); }
+    .add-cat-btn {
+      padding: 8px 16px; border-radius: var(--radius-full);
+      font-size: var(--text-body-sm); font-weight: 500;
+      border: 1px solid var(--color-border);
+      background: var(--color-card); color: var(--color-text-secondary);
+      transition: all 150ms ease-out;
+    }
+    .add-cat-btn.selected {
+      background: var(--color-primary-bg); color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+    .add-actions { display: flex; gap: var(--space-md); }
+    .add-actions button { flex: 1; height: 44px; border-radius: var(--radius-md); font-weight: 500; font-size: var(--text-body); }
+    .add-cancel { background: var(--color-bg); color: var(--color-text-secondary); border: 1px solid var(--color-border); }
+    .add-confirm { background: linear-gradient(135deg, #6BA5E1 0%, #4A90D9 100%); color: #FFFFFF; border: none; box-shadow: var(--shadow-lg); }
+    .add-confirm:active { transform: scale(0.97); }
+    .add-cancel:active { background: var(--color-divider); }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- 渐变头部 -->
+    <div class="home-header">
+      <div class="bubble bubble-1"></div>
+      <div class="bubble bubble-2"></div>
+      <div class="bubble bubble-3"></div>
+      <div class="bubble bubble-4"></div>
+      <div class="bubble bubble-5"></div>
+      <div class="header-inner">
+        <div class="header-row">
+          <div class="header-left">
+            <div class="home-title">打卡啦</div>
+            <div class="date-text">📅 2026年7月16日 星期四</div>
+          </div>
+          <div class="streak-pill">
+            <span style="font-size:24px">🌱</span>
+            <span class="streak-number">7</span>
+            <span class="streak-label">冒头</span>
+          </div>
+        </div>
+        <!-- 知识点条 -->
+        <div class="knowledge-bar" onclick="showKnowledge()">
+          <div class="knowledge-bar-top">
+            <span class="knowledge-tag" style="background:#EAF2FB;color:#4A90D9">📖 语文</span>
+            <span class="knowledge-hint">每日知识 · 点击查看</span>
+          </div>
+          <div class="knowledge-summary">《静夜思》李白：床前明月光，疑是地上霜</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="page-content">
+      <!-- 列表标题行 -->
+      <div class="list-header">
+        <span class="list-title">今日打卡</span>
+        <div class="list-progress">
+          <span class="progress-count" id="progressCount">0/5</span>
+          <div class="progress-ring-mini">
+            <svg viewBox="0 0 40 40" class="ring-svg-mini">
+              <circle cx="20" cy="20" r="17" fill="none" stroke="#ECEEF2" stroke-width="5"/>
+              <circle cx="20" cy="20" r="17" fill="none" stroke="#4A90D9" stroke-width="5"
+                stroke-linecap="round" stroke-dasharray="106.8" id="progressRing"
+                stroke-dashoffset="106.8"/>
+            </svg>
+            <span class="ring-text-mini" id="progressPct">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 打卡列表 -->
+      <div class="plan-list">
+        <div class="plan-list-container card" id="planList">
+          <!-- PlanCard 1 -->
+          <div class="plan-card" data-id="1" onclick="toggleCheckin(this)">
+            <div class="plan-category-icon study">📖</div>
+            <div class="plan-info">
+              <div class="plan-name">语文写字直播课</div>
+              <div class="plan-meta">10:00 - 11:00</div>
+            </div>
+            <button class="btn-checkin">打卡</button>
+          </div>
+          <!-- PlanCard 2 -->
+          <div class="plan-card" data-id="2" onclick="toggleCheckin(this)">
+            <div class="plan-category-icon study">🧮</div>
+            <div class="plan-info">
+              <div class="plan-name">数学计算打卡</div>
+              <div class="plan-meta">每日 20 题</div>
+            </div>
+            <button class="btn-checkin">打卡</button>
+          </div>
+          <!-- PlanCard 3 -->
+          <div class="plan-card" data-id="3" onclick="toggleCheckin(this)">
+            <div class="plan-category-icon reading">🔤</div>
+            <div class="plan-info">
+              <div class="plan-name">英语小E打卡</div>
+              <div class="plan-meta">口语 + 听读</div>
+            </div>
+            <button class="btn-checkin">打卡</button>
+          </div>
+          <!-- PlanCard 4 -->
+          <div class="plan-card" data-id="4" onclick="toggleCheckin(this)">
+            <div class="plan-category-icon sport">💃</div>
+            <div class="plan-info">
+              <div class="plan-name">舞蹈课</div>
+              <div class="plan-meta">16:00 - 17:30</div>
+            </div>
+            <button class="btn-checkin">打卡</button>
+          </div>
+          <!-- PlanCard 5 -->
+          <div class="plan-card" data-id="5" onclick="toggleCheckin(this)">
+            <div class="plan-category-icon entertainment">💻</div>
+            <div class="plan-info">
+              <div class="plan-name">编程学习</div>
+              <div class="plan-meta">Scratch 入门</div>
+            </div>
+            <button class="btn-checkin">打卡</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAB 添加按钮 -->
+    <button class="fab" onclick="showAddModal()"></button>
+
+    <!-- 底部 Tabbar -->
+    <div class="tabbar">
+      <div class="tabbar-inner">
+        <div class="tabbar-item active" onclick="switchTab(this, 'home')">
+          <div class="tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+          <span class="tab-label">首页</span>
+        </div>
+        <div class="tabbar-item" onclick="switchTab(this, 'calendar')">
+          <div class="tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="4" ry="4"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <span class="tab-label">日历</span>
+        </div>
+        <div class="tabbar-item" onclick="switchTab(this, 'stats')">
+          <div class="tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 20V10"></path>
+              <path d="M12 20V4"></path>
+              <path d="M6 20v-6"></path>
+            </svg>
+          </div>
+          <span class="tab-label">统计</span>
+        </div>
+        <div class="tabbar-item" onclick="switchTab(this, 'profile')">
+          <div class="tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <span class="tab-label">我的</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 鼓励文案（动态插入） -->
+    <div id="encouragementContainer"></div>
+    <!-- 庆祝弹窗（动态插入） -->
+    <div id="celebrateContainer"></div>
+    <!-- 徽章弹窗（动态插入） -->
+    <div id="badgeContainer"></div>
+    <!-- 添加弹窗（动态插入） -->
+    <div id="addContainer"></div>
+  </div>
+
+  <script>
+    // ===== 数据 =====
+    const encouragements = [
+      { emoji: '✨', text: '太棒了！继续加油！' },
+      { emoji: '🎉', text: '又完成一项！你真厉害！' },
+      { emoji: '💪', text: '坚持就是胜利！' },
+      { emoji: '🌟', text: '闪闪发光的你！' },
+      { emoji: '🥳', text: '打卡成功！好习惯养成中！' },
+    ];
+
+    const badges = [
+      { icon: '🔥', name: '三日连续', desc: '连续打卡3天解锁' },
+      { icon: '🌟', name: '七日连续', desc: '连续打卡7天解锁' },
+      { icon: '🏆', name: '完美一天', desc: '当天全部打卡完成解锁' },
+    ];
+
+    const categories = [
+      { key: 'study', icon: '📖', label: '语文', cls: 'study' },
+      { key: 'math', icon: '🧮', label: '数学', cls: 'study' },
+      { key: 'english', icon: '🔤', label: '英语', cls: 'reading' },
+      { key: 'sport', icon: '💃', label: '舞蹈', cls: 'sport' },
+      { key: 'coding', icon: '💻', label: '编程', cls: 'entertainment' },
+    ];
+
+    let completedCount = 0;
+    const totalCount = 5;
+
+    // ===== 打卡交互 =====
+    function toggleCheckin(card) {
+      const btn = card.querySelector('.btn-checkin');
+      if (btn.classList.contains('done')) return; // 已打卡，不可撤销（demo）
+
+      btn.classList.remove('checkin-anim');
+      void btn.offsetWidth; // 触发 reflow
+      btn.classList.add('done', 'checkin-anim');
+      btn.textContent = '已打卡';
+      card.classList.add('completed');
+
+      completedCount++;
+      updateProgress();
+
+      // 鼓励文案
+      const encour = encouragements[Math.floor(Math.random() * encouragements.length)];
+      showEncouragement(encour);
+
+      // 全部完成 → 庆祝
+      if (completedCount === totalCount) {
+        setTimeout(() => showCelebrate(), 800);
+      }
+
+      // 触感反馈
+      if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    // ===== 更新进度 =====
+    function updateProgress() {
+      const pct = Math.round((completedCount / totalCount) * 100);
+      const offset = 106.8 - (pct * 106.8) / 100;
+      document.getElementById('progressRing').setAttribute('stroke-dashoffset', offset);
+      document.getElementById('progressPct').textContent = pct + '%';
+      document.getElementById('progressCount').textContent = completedCount + '/' + totalCount;
+
+      if (pct === 100) {
+        document.getElementById('progressRing').classList.add('ring-complete');
+      }
+    }
+
+    // ===== 鼓励文案 =====
+    function showEncouragement(data) {
+      const container = document.getElementById('encouragementContainer');
+      container.innerHTML = `
+        <div class="encouragement-toast" onclick="hideEncouragement()">
+          <div class="encouragement-emoji">${data.emoji}</div>
+          <div class="encouragement-text">${data.text}</div>
+        </div>
+      `;
+      setTimeout(() => hideEncouragement(), 1800);
+    }
+
+    function hideEncouragement() {
+      const container = document.getElementById('encouragementContainer');
+      const toast = container.querySelector('.encouragement-toast');
+      if (toast) {
+        toast.style.transition = 'opacity 0.3s, transform 0.3s';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, -50%) scale(0.9) translateY(-10px)';
+        setTimeout(() => container.innerHTML = '', 300);
+      }
+    }
+
+    // ===== 庆祝弹窗 =====
+    function showCelebrate() {
+      const container = document.getElementById('celebrateContainer');
+      container.innerHTML = `
+        <div class="celebrate-modal" onclick="hideCelebrate()">
+          <div class="celebrate-content">
+            <div class="celebrate-emoji">🏆</div>
+            <div class="celebrate-title">完美一天！</div>
+            <div class="celebrate-desc">今天的所有打卡项都完成了，太厉害了！</div>
+            <button class="celebrate-btn" onclick="hideCelebrate()">继续加油</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function hideCelebrate() {
+      const container = document.getElementById('celebrateContainer');
+      container.innerHTML = '';
+    }
+
+    // ===== 徽章弹窗 =====
+    function showBadge() {
+      const badge = badges[Math.floor(Math.random() * badges.length)];
+      const container = document.getElementById('badgeContainer');
+      container.innerHTML = `
+        <div class="badge-toast">
+          <div class="badge-icon">${badge.icon}</div>
+          <div class="badge-name">🎉 徽章解锁</div>
+          <div class="badge-desc">${badge.name} — ${badge.desc}</div>
+          <div class="badge-close" onclick="hideBadge()">知道了</div>
+        </div>
+      `;
+      setTimeout(() => hideBadge(), 3000);
+    }
+
+    function hideBadge() {
+      document.getElementById('badgeContainer').innerHTML = '';
+    }
+
+    // ===== 知识点弹窗 =====
+    function showKnowledge() {
+      const container = document.getElementById('celebrateContainer');
+      container.innerHTML = `
+        <div class="celebrate-modal" onclick="hideCelebrate()">
+          <div class="celebrate-content">
+            <div class="celebrate-emoji">📖</div>
+            <div class="celebrate-title">每日知识</div>
+            <div class="celebrate-desc" style="font-size:14px;line-height:1.8">
+              《静夜思》 — 李白<br>
+              床前明月光，疑是地上霜。<br>
+              举头望明月，低头思故乡。
+            </div>
+            <button class="celebrate-btn" onclick="hideCelebrate()">知道了</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ===== Tab 切换 =====
+    function switchTab(el, key) {
+      document.querySelectorAll('.tabbar-item').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      if (navigator.vibrate) navigator.vibrate(10);
+
+      // demo：非首页 tab 显示提示
+      if (key !== 'home') {
+        const container = document.getElementById('celebrateContainer');
+        const labels = { calendar: '日历', stats: '统计', profile: '我的' };
+        container.innerHTML = `
+          <div class="celebrate-modal" onclick="hideCelebrate()">
+            <div class="celebrate-content">
+              <div class="celebrate-emoji">🚧</div>
+              <div class="celebrate-title">${labels[key]}页面</div>
+              <div class="celebrate-desc">Demo 预览 — 此页面尚未实现</div>
+              <button class="celebrate-btn" onclick="hideCelebrate(); switchTab(document.querySelector('.tabbar-item'), 'home')">返回首页</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // ===== 添加弹窗 =====
+    let selectedCategory = 'study';
+
+    function showAddModal() {
+      const container = document.getElementById('addContainer');
+      container.innerHTML = `
+        <div class="add-modal" onclick="hideAddModal(event)">
+          <div class="add-content" onclick="event.stopPropagation()">
+            <div class="add-title">添加打卡项</div>
+            <div class="add-field">
+              <label>名称</label>
+              <input class="add-input" id="addName" placeholder="输入打卡项名称" />
+            </div>
+            <div class="add-field">
+              <label>分类</label>
+              <div class="add-categories" id="addCategories">
+                ${categories.map(c => `
+                  <button class="add-cat-btn ${c.key === selectedCategory ? 'selected' : ''}"
+                    onclick="selectCategory('${c.key}')">${c.icon} ${c.label}</button>
+                `).join('')}
+              </div>
+            </div>
+            <div class="add-actions">
+              <button class="add-cancel" onclick="hideAddModal(event)">取消</button>
+              <button class="add-confirm" onclick="confirmAdd()">添加</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectCategory(key) {
+      selectedCategory = key;
+      document.querySelectorAll('#addCategories .add-cat-btn').forEach(b => b.classList.remove('selected'));
+      const cat = categories.find(c => c.key === key);
+      // 重新渲染分类按钮
+      const btns = document.querySelectorAll('#addCategories .add-cat-btn');
+      btns.forEach(b => {
+        if (b.textContent.trim().startsWith(cat.icon)) b.classList.add('selected');
+      });
+    }
+
+    function confirmAdd() {
+      const name = document.getElementById('addName').value.trim();
+      if (!name) { document.getElementById('addName').style.borderColor = '#E74C3C'; return; }
+
+      const cat = categories.find(c => c.key === selectedCategory);
+      const list = document.getElementById('planList');
+
+      const card = document.createElement('div');
+      card.className = 'plan-card';
+      card.setAttribute('data-id', Date.now());
+      card.setAttribute('onclick', 'toggleCheckin(this)');
+      card.style.animation = 'list-item-enter 300ms ease-out forwards';
+      card.innerHTML = `
+        <div class="plan-category-icon ${cat.cls}">${cat.icon}</div>
+        <div class="plan-info">
+          <div class="plan-name">${name}</div>
+          <div class="plan-meta">${cat.label}</div>
+        </div>
+        <button class="btn-checkin">打卡</button>
+      `;
+      list.appendChild(card);
+
+      // 更新总数
+      totalCount++;
+      updateProgress();
+
+      hideAddModal();
+    }
+
+    function hideAddModal(e) {
+      if (e && e.target.closest('.add-content')) return;
+      document.getElementById('addContainer').innerHTML = '';
+    }
+  </script>
+</body>
+</html>
