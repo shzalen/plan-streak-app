@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>已打卡项划掉效果原型</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background:#f0f2f5;
+    display:flex;
+    justify-content:center;
+  }
+  .phone-frame {
+    width:100%; max-width:375px; background:#fff; min-height:100vh;
+    position:relative; overflow:hidden;
+  }
+
+  /* 顶部蓝色区域 */
+  .header {
+    background:linear-gradient(180deg, #4A90D9, #3A7BC8);
+    padding:12px 16px 24px;
+    color:#fff;
+  }
+  .header-title { font-size:22px; font-weight:700; margin-bottom:4px; }
+  .header-date { font-size:15px; opacity:0.9; }
+
+  /* 内容卡片 */
+  .content-card {
+    background:#fff;
+    border-radius:16px 16px 0 0;
+    margin-top:-16px;
+    padding:16px 0 80px;
+  }
+  .section-title {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 16px 12px;
+  }
+  .section-title-left { font-size:16px; font-weight:700; color:#1a1a1a; }
+  .section-title-right { font-size:13px; color:#999; }
+
+  /* 列表项 */
+  .plan-card {
+    display:flex; align-items:center;
+    padding:14px 16px;
+    border-bottom:0.5px solid #f5f5f5;
+  }
+  .plan-card.completed { background:#FAFBFC; }
+
+  .plan-left {
+    flex:1; min-width:0; display:flex; align-items:center; gap:12px;
+  }
+  .plan-icon {
+    width:42px; height:42px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .plan-text {
+    position:relative; flex:1;
+  }
+
+  /* 文字样式 */
+  .plan-name {
+    font-size:16px; font-weight:500; color:#1a1a1a;
+    margin-bottom:4px; transition:all .3s;
+    position:relative; display:inline-block;
+  }
+  .plan-time {
+    font-size:13px; color:#999;
+    transition:all .3s; position:relative; display:inline-block;
+  }
+
+  /* 已完成划掉效果 */
+  .plan-card.completed .plan-name {
+    color:#BDBDBD;
+  }
+  .plan-card.completed .plan-time {
+    color:#D0D0D0;
+  }
+
+  /* 方案 A：纯文字删除线 */
+  .style-a .plan-card.completed .plan-name,
+  .style-a .plan-card.completed .plan-time {
+    text-decoration:line-through;
+  }
+
+  /* 方案 B：SVG 红色划线 */
+  .style-b .line-through {
+    position:absolute; left:0; top:50%; right:0;
+    height:1px; background:#E53935;
+    transform:rotate(-2deg) scaleX(0);
+    transform-origin:left center;
+    animation:drawLine .5s ease-out forwards;
+  }
+  .style-b .plan-card.completed .line-through { display:block; }
+  .style-b .plan-time .line-through { top:45%; }
+  @keyframes drawLine {
+    to { transform:rotate(-2deg) scaleX(1); }
+  }
+
+  /* 方案 C：印章盖在文字上 */
+  .style-c .plan-card.completed .plan-name {
+    color:rgba(189,189,189,0.7);
+  }
+  .style-c .stamp-overlay {
+    position:absolute; left:0; top:0; bottom:0; right:-40px;
+    pointer-events:none; display:none;
+  }
+  .style-c .plan-card.completed .stamp-overlay {
+    display:flex; align-items:center; justify-content:flex-start;
+  }
+  .style-c .stamp-overlay svg {
+    width:52px; height:52px; opacity:0.8;
+    transform:rotate(-12deg);
+  }
+
+  /* 右侧状态 */
+  .plan-status {
+    flex-shrink:0; width:44px; display:flex; align-items:center; justify-content:center;
+  }
+  .check-flower {
+    width:32px; height:32px;
+  }
+  .btn-checkin {
+    height:36px; padding:0 16px;
+    background:linear-gradient(180deg,#5BA0E6,#4A90D9);
+    color:#fff; font-size:13px; font-weight:700;
+    border:none; border-radius:18px;
+  }
+
+  /* 底部 Tabbar */
+  .tabbar {
+    position:fixed; bottom:0; left:0; right:0; max-width:375px; margin:0 auto;
+    height:calc(50px + env(safe-area-inset-bottom)); background:#fff;
+    border-top:0.5px solid #e0e0e0; display:flex; padding-top:6px;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .tab-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; font-size:10px; color:#999; }
+  .tab-item.active { color:#4A90D9; }
+  .tab-icon { font-size:20px; }
+
+  /* 切换按钮 */
+  .switch-bar {
+    position:fixed; top:10px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; z-index:100;
+    background:rgba(0,0,0,0.75); padding:6px 10px; border-radius:20px;
+  }
+  .switch-btn {
+    color:#fff; font-size:12px; padding:4px 10px; border-radius:12px;
+    background:transparent; border:none; opacity:0.6;
+  }
+  .switch-btn.active { background:#4A90D9; opacity:1; }
+</style>
+</head>
+<body>
+
+<div class="switch-bar">
+  <button class="switch-btn active" onclick="setStyle('a')">A 删除线</button>
+  <button class="switch-btn" onclick="setStyle('b')">B 红色划线</button>
+  <button class="switch-btn" onclick="setStyle('c')">C 印章覆盖</button>
+</div>
+
+<div class="phone-frame" id="phoneFrame" class="style-a">
+
+  <div class="header">
+    <div class="header-title">打卡啦</div>
+    <div class="header-date">7月24日 周五</div>
+  </div>
+
+  <div class="content-card">
+    <div class="section-title">
+      <span class="section-title-left">今日打卡</span>
+      <span class="section-title-right">7/7 100%</span>
+    </div>
+
+    <!-- 已完成：体能 -->
+    <div class="plan-card completed">
+      <div class="plan-left">
+        <div class="plan-icon" style="background:#FFF3E0;">🏃</div>
+        <div class="plan-text">
+          <div class="plan-name">体能</div>
+          <div class="line-through"></div>
+          <div class="plan-time">09:00</div>
+          <div class="line-through"></div>
+          <div class="stamp-overlay">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="21" fill="none" stroke="#E53935" stroke-width="2.5"/>
+              <circle cx="24" cy="24" r="17" fill="none" stroke="#E53935" stroke-width="0.8" stroke-dasharray="1.5,1.5"/>
+              <circle cx="24" cy="24" r="14" fill="none" stroke="#E53935" stroke-width="1"/>
+              <text x="24" y="22" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#E53935" style="font-family:'PingFang SC',sans-serif;">已打卡</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="plan-status">
+        <svg class="check-flower" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="6" r="3.5" fill="#FF3B30"/>
+          <circle cx="18" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="16" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="8" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="6" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="12" cy="12" r="3" fill="#FFD60A"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 已完成：人文创作 -->
+    <div class="plan-card completed">
+      <div class="plan-left">
+        <div class="plan-icon" style="background:#FCE4EC;">🎭</div>
+        <div class="plan-text">
+          <div class="plan-name">人文创作</div>
+          <div class="line-through"></div>
+          <div class="plan-time">18:30</div>
+          <div class="line-through"></div>
+          <div class="stamp-overlay">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="21" fill="none" stroke="#E53935" stroke-width="2.5"/>
+              <circle cx="24" cy="24" r="17" fill="none" stroke="#E53935" stroke-width="0.8" stroke-dasharray="1.5,1.5"/>
+              <circle cx="24" cy="24" r="14" fill="none" stroke="#E53935" stroke-width="1"/>
+              <text x="24" y="22" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#E53935" style="font-family:'PingFang SC',sans-serif;">已打卡</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="plan-status">
+        <svg class="check-flower" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="6" r="3.5" fill="#FF3B30"/>
+          <circle cx="18" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="16" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="8" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="6" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="12" cy="12" r="3" fill="#FFD60A"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 已完成：英语口语 -->
+    <div class="plan-card completed">
+      <div class="plan-left">
+        <div class="plan-icon" style="background:#E8F5E9;">🗣️</div>
+        <div class="plan-text">
+          <div class="plan-name">英语口语</div>
+          <div class="line-through"></div>
+          <div class="plan-time">全天</div>
+          <div class="line-through"></div>
+          <div class="stamp-overlay">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="21" fill="none" stroke="#E53935" stroke-width="2.5"/>
+              <circle cx="24" cy="24" r="17" fill="none" stroke="#E53935" stroke-width="0.8" stroke-dasharray="1.5,1.5"/>
+              <circle cx="24" cy="24" r="14" fill="none" stroke="#E53935" stroke-width="1"/>
+              <text x="24" y="22" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#E53935" style="font-family:'PingFang SC',sans-serif;">已打卡</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="plan-status">
+        <svg class="check-flower" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="6" r="3.5" fill="#FF3B30"/>
+          <circle cx="18" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="16" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="8" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="6" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="12" cy="12" r="3" fill="#FFD60A"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 已完成：自学数学 -->
+    <div class="plan-card completed">
+      <div class="plan-left">
+        <div class="plan-icon" style="background:#E3F2FD;">📐</div>
+        <div class="plan-text">
+          <div class="plan-name">自学数学</div>
+          <div class="line-through"></div>
+          <div class="plan-time">全天</div>
+          <div class="line-through"></div>
+          <div class="stamp-overlay">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="21" fill="none" stroke="#E53935" stroke-width="2.5"/>
+              <circle cx="24" cy="24" r="17" fill="none" stroke="#E53935" stroke-width="0.8" stroke-dasharray="1.5,1.5"/>
+              <circle cx="24" cy="24" r="14" fill="none" stroke="#E53935" stroke-width="1"/>
+              <text x="24" y="22" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#E53935" style="font-family:'PingFang SC',sans-serif;">已打卡</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="plan-status">
+        <svg class="check-flower" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="6" r="3.5" fill="#FF3B30"/>
+          <circle cx="18" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="16" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="8" cy="16" r="3.5" fill="#FF3B30"/>
+          <circle cx="6" cy="9" r="3.5" fill="#FF3B30"/>
+          <circle cx="12" cy="12" r="3" fill="#FFD60A"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 未完成：小E中文 -->
+    <div class="plan-card">
+      <div class="plan-left">
+        <div class="plan-icon" style="background:#FCE4EC;">🧒</div>
+        <div class="plan-text">
+          <div class="plan-name">小E中文</div>
+          <div class="line-through"></div>
+          <div class="plan-time">全天</div>
+          <div class="line-through"></div>
+          <div class="stamp-overlay">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="21" fill="none" stroke="#E53935" stroke-width="2.5"/>
+              <circle cx="24" cy="24" r="17" fill="none" stroke="#E53935" stroke-width="0.8" stroke-dasharray="1.5,1.5"/>
+              <circle cx="24" cy="24" r="14" fill="none" stroke="#E53935" stroke-width="1"/>
+              <text x="24" y="22" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#E53935" style="font-family:'PingFang SC',sans-serif;">已打卡</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="plan-status">
+        <button class="btn-checkin">打卡</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tabbar">
+    <div class="tab-item active">
+      <span class="tab-icon">🏠</span><span>首页</span>
+    </div>
+    <div class="tab-item">
+      <span class="tab-icon">📅</span><span>日历</span>
+    </div>
+    <div class="tab-item">
+      <span class="tab-icon">📊</span><span>统计</span>
+    </div>
+    <div class="tab-item">
+      <span class="tab-icon">👤</span><span>我的</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function setStyle(s) {
+    const frame = document.getElementById('phoneFrame');
+    frame.className = 'phone-frame style-' + s;
+    document.querySelectorAll('.switch-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent.trim().startsWith(s.toUpperCase()));
+    });
+  }
+  setStyle('a');
+</script>
+
+</body>
+</html>
